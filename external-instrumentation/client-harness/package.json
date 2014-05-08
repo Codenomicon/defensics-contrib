@@ -1,0 +1,15 @@
+{
+  "name": "agent-client-tester",
+  "version": "0.0.0",
+  "description": "Client instrumentation harness",
+  "main": "agent-client-tester.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "dependencies": {
+    "express": "3.x.x"
+  },
+  "author": "Codenomicon Ltd.",
+  "license": "BSD"
+}
