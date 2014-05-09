@@ -149,17 +149,18 @@ main.log? Well, luckily it's easy!
 Run the **log-tailer/agent-logtailer.py** script and give it the log
 files you want to watch (you can use multiple):
 
-<pre>
+<code>
   $ python agent-logtailer.py /var/log/system.log
   Watching 1 log files
   Started Instrumentation HTTP Server on port 8000
-</pre>
+</code>
+
 
 Now set up external instrumentation script in Defensics:
 
-<pre>
+<code>
   python send-code-env.py http://localhost:8000/
-</pre>
+</code>
 
 You can of course use a remote address if your system under test
 is not local. Just replace localhost with your IP address under test.
@@ -169,9 +170,57 @@ as failed. If you don't want this, simply switch the script from
 "as instrumentation" to "after test case". Then only the log output
 will be used.
 
-# Router/firewall testing #
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+# Router and firewall testing #
+
+Some devices forward traffic without being a party of the connection.
+With this scenario it may not as interesting if the management service
+is interrupted as if the forwarded traffic is impacted.
+
+An approach that works with many devices and does not require specific
+support from the tested router/firewall is to open a TCP connection
+through it and monitor that connection for interruptions.
+This works also for cases where the tested protocol does not have any
+responses that the fuzzer could directly monitor.
+
+<code>
+ ------------       -------------        --------
+|  Defensics | --- | System Under | --  | Echo    |
+|  +agent    | LAN |    Test      | WAN | Server  |
+ ============       ==============       ========
+</code>
+
+Run the **tcp-passthrough-instrument/tcp-instrument-echo-server.js**
+on a system on one side of the tested device. Defensics connects to
+the agent and asks it if the connection to the echo server is still
+up. If connection is disrupted, test case is marked as failed.
+Both the agent and the echo server require [Node.JS][nodejs] on the
+system they run on.
+
+Assuming the echo server runs on *192.168.0.200*, the
+*Execute as instrumentation* command in Defensics instrumentation settings
+would be:
+
+<code>
+  python send-code-env.py http://192.168.0.200:8000/
+</code>
+
+The agent can run on the same system as Defensics or on another
+system. The only requirements are that Defensics can connect to the
+agent and the agent can connect to the echo server through System Under Test.
+
+The echo server does not need any arguments and will bind to port 7777.
+
+<code>
+  node tcp-instrument-echo-server.js
+</code>
+
+Run the agent like this, replacing echo server IP address:
+
+<code>
+  node agent-tcp-instrument.js 192.168.0.200
+</code>
 
 
 [sut]: http://en.wikipedia.org/wiki/System_under_test "System Under Test"
