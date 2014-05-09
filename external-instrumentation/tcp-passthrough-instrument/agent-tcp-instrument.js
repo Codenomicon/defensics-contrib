@@ -132,15 +132,27 @@ var Client = function() {
     };
 };
 
+var usage = function () {
+    console.error('Usage:');
+    console.error('  node agent-tcp-instrument.js 10.1.2.3');
+    console.error('');
+    console.error('Replace 10.1.2.3 with the address for the echo server');
+};
+
 // main
 var main = function () {
     // Get target IP address from commandline or use localhost
-    var HOST = process.argv[2];
-    var PORT = 7777;
+    var host = process.argv[2];
+    var port = 7777;
+    
+    if (!host) {
+        usage();
+        process.exit(1);
+    }
 
     // Initialize a new client
     var client = Client();
-    client.connect(HOST, PORT);
+    client.connect(host, port);
 
 
     /// HTTP interface
