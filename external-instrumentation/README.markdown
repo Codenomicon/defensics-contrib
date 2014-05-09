@@ -36,13 +36,14 @@ A commonly used, but naïve way of testing client applications
 is to execute the client repeatedly in a loop, for example:
 
 **run-client.sh**
-<code>
-  #/bin/bash
-  while (true); do
-          client-app --connect fuzzer:1234
-          sleep 1
-  done
-</code>
+
+```
+ #/bin/bash
+ while (true); do
+         client-app --connect fuzzer:1234
+         sleep 1
+ done
+```
 
 There are multiple problems with this approach:
 
@@ -65,7 +66,7 @@ the same system as Defensics.
 
 Usage:
 
-> node agent-client-tester.js client-app --connect fuzzer:1234
+```node agent-client-tester.js client-app --connect fuzzer:1234```
 
 Running that will start the agent to listen for connections from
 Defensics on all local addresses on port 8000
@@ -76,7 +77,7 @@ installing [Python][python] on the Defensics system. Most
 Linux installations include Python by default and it is
 a free download for Windows.
 
- * Target port: 4433
+**Target port**: 4433
 
 Instrumentation / External Instrumentation should be as below.
 This configuration sends all Defensics signals to the client
@@ -84,16 +85,14 @@ harness, including all CODE environment variables.
 
 ![Screenshot: Example configuration][code]
 
-<!-- plaintext
-Setting name          | Command
---------------------- | ----------------------------------------------
-before test run       | send-code-env.py http://localhost:8000/api/before-run
-before each test case | send-code-env.py http://localhost:8000/api/before-case
-as instrumentation    | send-code-env.py http://localhost:8000/api/instrumentation
-after each test case  | send-code-env.py http://localhost:8000/api/after-case
-when instrument fails | send-code-env.py http://localhost:8000/api/instrumentation-fail
-after test run        | send-code-env.py http://localhost:8000/api/after-run
--->
+| Setting name          | Command                                              |
+| --------------------- |:---------------------------------------------------- |
+| before test run       | `send-code-env.py http://ip:8000/api/before-run`     |
+| before each test case | `send-code-env.py http://ip:8000/api/before-case`    |
+| as instrumentation    | `send-code-env.py http://ip:8000/api/instrumentation`|
+| after each test case  | `send-code-env.py http://ip:8000/api/after-case`     |
+| when instrument fails | `send-code-env.py http://ip:8000/api/instrumentation-fail` |
+| after test run        | `send-code-env.py http://ip:8000/api/after-run`      |
 
 ### send-code-env.py ###
 
@@ -105,24 +104,26 @@ built-in documentation.
 
 Some examples:
 
- * **CODE\_TEST\_CASE** : Index of the current test case.
- * **CODE_VERDICT** : Test case diagnosis (pass/fail)
- * **CODE\_INST\_ROUNDS** : Count of instrumentation attempts
+|||
+| ------------------ |:----------------------------------- |
+| `CODE_TEST_CASE`   | Index of the current test case.     |
+| `CODE_VERDICT`     | Test case diagnosis (pass/fail)     |
+| `CODE_INST_ROUNDS` | Count of instrumentation attempts   |
 
-**[send-code-env.py](send-code-env.py)** is a
+`send-code-env/send-code-env.py` is a
 ready-to-use example script that sends all environment
 variables with the CODE prefix as a JSON structure over HTTP.
 This makes for a simple protocol to build on. The JSON will
 look something like this:
 
-<code>
+```
   {
-    "CODE\_LOAD\_ID": "1397697721853-0",
-    "CODE\_RESULT\_DIR": "/data/results/TLS-1.2-Client/20140422-1602-42",
-    "CODE\_SUITE": "d3-tls12-client-3.0.0",
+    "CODE_LOAD_ID": "1397697721853-0",
+    "CODE_RESULT_DIR": "/data/results/TLS-1.2-Client/20140422-1602-42",
+    "CODE_SUITE": "d3-tls12-client-3.0.0",
     ...
   }
-</code>
+```
 
 To use the script, you need to install Python on the system
 where you run Defensics if you don't have it already. You may
@@ -131,9 +132,7 @@ not in your path.
 
 Typical usage (what you enter in Defensics):
 
-<code>
-  python /data/scripts/send-code-env.py http://fuzz:8000/
-</code>
+```python /data/scripts/send-code-env.py http://fuzz:8000/```
 
 Assuming you have a receiving HTTP server on host *fuzz* on
 port 8000. You can use this script in any of the external
@@ -149,18 +148,16 @@ main.log? Well, luckily it's easy!
 Run the **log-tailer/agent-logtailer.py** script and give it the log
 files you want to watch (you can use multiple):
 
-<code>
+```
   $ python agent-logtailer.py /var/log/system.log
   Watching 1 log files
   Started Instrumentation HTTP Server on port 8000
-</code>
+```
 
 
 Now set up external instrumentation script in Defensics:
 
-<code>
-  python send-code-env.py http://localhost:8000/
-</code>
+```python send-code-env.py http://localhost:8000/```
 
 You can of course use a remote address if your system under test
 is not local. Just replace localhost with your IP address under test.
@@ -184,12 +181,12 @@ through it and monitor that connection for interruptions.
 This works also for cases where the tested protocol does not have any
 responses that the fuzzer could directly monitor.
 
-<code>
+```
  ------------       -------------        --------
 |  Defensics | --- | System Under | --  | Echo    |
 |  +agent    | LAN |    Test      | WAN | Server  |
  ============       ==============       ========
-</code>
+```
 
 Run the **tcp-passthrough-instrument/tcp-instrument-echo-server.js**
 on a system on one side of the tested device. Defensics connects to
@@ -202,9 +199,7 @@ Assuming the echo server runs on *192.168.0.200*, the
 *Execute as instrumentation* command in Defensics instrumentation settings
 would be:
 
-<code>
-  python send-code-env.py http://192.168.0.200:8000/
-</code>
+```python send-code-env.py http://192.168.0.200:8000/```
 
 The agent can run on the same system as Defensics or on another
 system. The only requirements are that Defensics can connect to the
@@ -212,15 +207,11 @@ agent and the agent can connect to the echo server through System Under Test.
 
 The echo server does not need any arguments and will bind to port 7777.
 
-<code>
-  node tcp-instrument-echo-server.js
-</code>
+```node tcp-instrument-echo-server.js```
 
 Run the agent like this, replacing echo server IP address:
 
-<code>
-  node agent-tcp-instrument.js 192.168.0.200
-</code>
+```node agent-tcp-instrument.js 192.168.0.200```
 
 
 [sut]: http://en.wikipedia.org/wiki/System_under_test "System Under Test"
