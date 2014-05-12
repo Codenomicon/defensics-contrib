@@ -46,6 +46,7 @@ def get_code_env():
     PREFIX = 'CODE_'
     code_env = [var for var in os.environ.keys() if var.startswith(PREFIX)]
     values = { var: os.environ[var] for var in code_env }
+    return values
 
 # Send all CODE_ environment variables over HTTP; expect JSON back
 def send_http_get_json(uri):
