@@ -62,7 +62,10 @@ Client harness agent source code is provided in
 **client-harness/agent-client-tester.js**. The application
 requires [Node.JS][nodejs] to run on the system where the
 client application is executed. It does not have to be on
-the same system as Defensics.
+the same system as Defensics. Also required is the HTTP
+server module "Express". You can install that if you go
+to the directory **client-harness** and run ```npm install```.
+That will install it locally under a directory ```node_modules```.
 
 Usage:
 
