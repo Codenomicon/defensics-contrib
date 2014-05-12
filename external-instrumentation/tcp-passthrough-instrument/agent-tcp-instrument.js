@@ -46,6 +46,8 @@ interface documentation.
 
 var net = require('net');
 
+var PORT = 8000; // Port to listen on
+
 var INTERVAL = 100;         // Interval to send echo, ms
 var TIMEOUT = INTERVAL * 3; // Timeout period
 
@@ -163,8 +165,8 @@ var main = function () {
         };
         res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(resdata));
-    }).listen(8000, '0.0.0.0');
-    console.log('HTTP running at port 8000');
+    }).listen(PORT, '0.0.0.0');
+    console.log('HTTP running at port ' + PORT);
 };
 
 main();
