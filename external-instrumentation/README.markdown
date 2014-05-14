@@ -19,6 +19,15 @@ The hooks supported in Defensics 11 are:
 
 ## Client testing ##
 
+Fuzzing client software with network protocols has a specific
+set of challenges. The test harness described here runs on
+the client device and works with Defensics through its
+external instrumentation mechanism. Properly configured, the
+test harness allows for automated testing of client software
+with meaningful detection of errors.
+
+### Background ###
+
 When testing a client-role application (such as a web browser
 or command line client like cURL or mpg123), The fuzzer is
 set up to wait for an incoming connection rather than
