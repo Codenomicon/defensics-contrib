@@ -38,6 +38,8 @@ http://localhost:8000/api/:command   where :command is one of:
                         after-run
 */
 
+var stdio = require('stdio');
+
 var net = require('net'),
     url = require('url'),
     util = require('util'),
@@ -56,11 +58,11 @@ var SINGLESTEP = true;
 // Kill application if not completed within MAX_EXECUTION_TIME
 var MAX_EXECUTION_TIME = 8000; //ms
 
-// HTTP port to listen on
-var PORT = 8000;
-
-var CMD = process.argv[2];
-var ARGS = process.argv.slice(3);
+// Command line arguments. Default defined here.
+var CMD = null;  // client command
+var ARGS = [];   // client arguments
+var PORT = 8000; // HTTP port to listen on
+var VERBOSE = false;
 
 // Log debug output if debug enabled
 var DEBUG = function(msg) {
@@ -188,8 +190,28 @@ var Process = function(cmd, args, timeout) {
 
 // Main routine: initialize
 
+// Parse command line
+
+var ops = stdio.getopt({
+	port: {key: 'p', args: 1, description: 'Listen port'},
+	verbose: {key: 'v', description: 'Verbose output'}
+}, 'target-command-line');
+
+if (ops.port)
+    PORT = ops.port;
+
+if (ops.verbose)
+    VERBOSE = true;
+
+if (ops.args) {
+    if (ops.args.length > 0)
+        CMD = ops.args[0];
+    if (ops.args.length > 1)
+        ARGS = ops.args.slice(1);
+}
+
 if (!CMD) {
-    console.log('Usage: ' + NAME + ' <client-application-cmdline>');
+    ops.printHelp();
     process.exit(1);
 }
 
@@ -219,6 +241,8 @@ http.post('/api/:command', function(req, res){
         case 'before-case':
             // If stepping, trigger start here. Otherwise nothing.
             if (SINGLESTEP) {
+		if (VERBOSE)
+	            console.log('Test case ' + req.body.CODE_TEST_CASE);
                 // Short wait before starting the client to make sure
                 // fuzzer is ready to accept connection.
                 setTimeout(function () {
