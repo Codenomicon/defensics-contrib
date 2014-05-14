@@ -38,7 +38,8 @@ http://localhost:8000/api/:command   where :command is one of:
                         after-run
 */
 
-var stdio = require('stdio');
+var argv = require('minimist')(process.argv.slice(2));
+console.dir(argv);
 
 var net = require('net'),
     url = require('url'),
@@ -192,26 +193,21 @@ var Process = function(cmd, args, timeout) {
 
 // Parse command line
 
-var ops = stdio.getopt({
-	port: {key: 'p', args: 1, description: 'Listen port'},
-	verbose: {key: 'v', description: 'Verbose output'}
-}, 'target-command-line');
-
-if (ops.port)
+if (argv.port) {
     PORT = ops.port;
+}
 
-if (ops.verbose)
+if (argv.verbose) {
     VERBOSE = true;
+}
 
-if (ops.args) {
-    if (ops.args.length > 0)
-        CMD = ops.args[0];
-    if (ops.args.length > 1)
-        ARGS = ops.args.slice(1);
+if (argv._.length > 0) {
+    CMD = argv._[0];
+    ARGS = argv._.slice(1);
 }
 
 if (!CMD) {
-    ops.printHelp();
+    usage();
     process.exit(1);
 }
 
