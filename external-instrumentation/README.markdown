@@ -20,11 +20,14 @@ The hooks supported in Defensics 11 are:
 ## Client testing ##
 
 Fuzzing client software with network protocols has a specific
-set of challenges. The test harness described here runs on
-the client device and works with Defensics through its
-external instrumentation mechanism. Properly configured, the
-test harness allows for automated testing of client software
-with meaningful detection of errors.
+set of challenges. The client harness described here
+allows for automated testing of client software
+with meaningful detection of errors. It consists of two
+parts. The test harness is a Node.js script that runs on the
+client and listens for incoming commands. A Python script on
+the test machine, invoked from Defensics' external
+instrumentation, sends commands to the node.js script to drive
+the testing forward.
 
 ### Background ###
 
@@ -65,13 +68,15 @@ clearly need to monitor the application during execution.
 One way to do that would be to rig it into a harness that
 catches fatal signals.
 
-### Solution: Defensics/Client harness ###
+### Defensics client harness ###
 
-Client harness agent source code is provided in
+The client harness agent source code is provided in
 **client-harness/agent-client-tester.js**. The application
 requires [Node.JS][nodejs] to run on the system where the
 client application is executed. It does not have to be on
-the same system as Defensics. Also required is the HTTP
+the same system as Defensics.
+
+Also required is the HTTP
 server module "Express". You can install that if you go
 to the directory **client-harness** and run ```npm install```.
 That will install it locally under a directory ```node_modules```.
@@ -81,15 +86,15 @@ Usage:
 ```node agent-client-tester.js client-app --connect fuzzer:1234```
 
 Running that will start the agent to listen for connections from
-Defensics on all local addresses on port 8000
+Defensics on all local addresses on port 8000.
+
+### Configuring Defensics external instrumentation to use the client harness ###
 
 Here is an example Defensics configuration using
 **send-code-env/send-code-env.py**. The script requires
 installing [Python][python] on the Defensics system. Most
 Linux installations include Python by default and it is
 a free download for Windows.
-
-**Target port**: 4433
 
 Instrumentation / External Instrumentation should be as below.
 This configuration sends all Defensics signals to the client
@@ -106,7 +111,7 @@ harness, including all CODE environment variables.
 | when instrument fails | `send-code-env.py http://ip:8000/api/instrumentation-fail` |
 | after test run        | `send-code-env.py http://ip:8000/api/after-run`      |
 
-### send-code-env.py ###
+### More about send-code-env.py ###
 
 The information about current test case, where Defensics
 results are stored, etc. is available for the external
@@ -150,6 +155,12 @@ Assuming you have a receiving HTTP server on host *fuzz* on
 port 8000. You can use this script in any of the external
 instrumentation hooks (before, after, as instrumentation and
 so on).
+
+In addition, `send-code-env.py` parses the response from the
+client harness to detect if errors have occurred. If so,
+informative messages are printed to the console and the script
+returns a non-zero value, which means Defensics will mark the
+corresponding test case as a failure.
 
 # Log file monitoring #
 
