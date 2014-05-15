@@ -39,7 +39,6 @@ http://localhost:8000/api/:command   where :command is one of:
 */
 
 var argv = require('minimist')(process.argv.slice(2));
-// console.dir(argv);
 
 var net = require('net'),
     url = require('url'),
@@ -200,18 +199,21 @@ var usage = function() {
 // Parse command line
 
 if (argv.p) {
-    PORT = argv.p;
+    PORT = parseInt(argv.p);
+    if (!(PORT > 0 && PORT < 65536)) {
+        usage();
+        process.exit(1);
+    }
 }
-
 if (argv.v) {
     VERBOSE = true;
 }
 
+// Target command from command line
 if (argv._.length > 0) {
     CMD = argv._[0];
     ARGS = argv._.slice(1);
 }
-
 if (!CMD) {
     usage();
     process.exit(1);
