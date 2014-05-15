@@ -39,7 +39,7 @@ http://localhost:8000/api/:command   where :command is one of:
 */
 
 var argv = require('minimist')(process.argv.slice(2));
-console.dir(argv);
+// console.dir(argv);
 
 var net = require('net'),
     url = require('url'),
@@ -188,16 +188,22 @@ var Process = function(cmd, args, timeout) {
     };
 };
 
+var usage = function() {
+    console.log('Usage: node agent-client-tester.js [-p port] [-v] -- client-command-line');
+    console.log('  -p port : listening port, default is 8000');
+    console.log('  -v : verbose output');
+};
+
 
 // Main routine: initialize
 
 // Parse command line
 
-if (argv.port) {
-    PORT = ops.port;
+if (argv.p) {
+    PORT = argv.p;
 }
 
-if (argv.verbose) {
+if (argv.v) {
     VERBOSE = true;
 }
 

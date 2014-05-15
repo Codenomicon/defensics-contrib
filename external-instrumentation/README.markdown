@@ -83,10 +83,11 @@ That will install it locally under a directory ```node_modules```.
 
 Usage:
 
-```node agent-client-tester.js client-app --connect fuzzer:1234```
+```node agent-client-tester.js [-p port] [-v] -- client-command-line
 
 Running that will start the agent to listen for connections from
-Defensics on all local addresses on port 8000.
+Defensics on all local addresses on the port specified, or
+port 8000 by default.
 
 ### Configuring Defensics external instrumentation to use the client harness ###
 
@@ -152,7 +153,7 @@ Typical usage (what you enter in Defensics):
 ```python /data/scripts/send-code-env.py http://fuzz:8000/```
 
 Assuming you have a receiving HTTP server on host *fuzz* on
-port 8000. You can use this script in any of the external
+port 8000. You can use this script in all of the external
 instrumentation hooks (before, after, as instrumentation and
 so on).
 
