@@ -83,7 +83,7 @@ That will install it locally under a directory ```node_modules```.
 
 Usage:
 
-```node agent-client-tester.js [-p port] [-v] -- client-command-line
+```node agent-client-tester.js [-p port] [-v] -- client-command-line```
 
 Running that will start the agent to listen for connections from
 Defensics on all local addresses on the port specified, or
