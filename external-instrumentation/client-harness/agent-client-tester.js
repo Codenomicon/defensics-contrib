@@ -38,7 +38,7 @@ http://localhost:8000/api/:command   where :command is one of:
                         after-run
 */
 
-var stdio = require('stdio');
+var argv = require('minimist')(process.argv.slice(2));
 
 var net = require('net'),
     url = require('url'),
@@ -187,31 +187,35 @@ var Process = function(cmd, args, timeout) {
     };
 };
 
+var usage = function() {
+    console.log('Usage: node agent-client-tester.js [-p port] [-v] -- client-command-line');
+    console.log('  -p port : listening port, default is 8000');
+    console.log('  -v : verbose output');
+};
+
 
 // Main routine: initialize
 
 // Parse command line
 
-var ops = stdio.getopt({
-	port: {key: 'p', args: 1, description: 'Listen port'},
-	verbose: {key: 'v', description: 'Verbose output'}
-}, 'target-command-line');
-
-if (ops.port)
-    PORT = ops.port;
-
-if (ops.verbose)
+if (argv.p) {
+    PORT = parseInt(argv.p);
+    if (!(PORT > 0 && PORT < 65536)) {
+        usage();
+        process.exit(1);
+    }
+}
+if (argv.v) {
     VERBOSE = true;
-
-if (ops.args) {
-    if (ops.args.length > 0)
-        CMD = ops.args[0];
-    if (ops.args.length > 1)
-        ARGS = ops.args.slice(1);
 }
 
+// Target command from command line
+if (argv._.length > 0) {
+    CMD = argv._[0];
+    ARGS = argv._.slice(1);
+}
 if (!CMD) {
-    ops.printHelp();
+    usage();
     process.exit(1);
 }
 
