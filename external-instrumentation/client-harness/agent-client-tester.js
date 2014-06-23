@@ -194,8 +194,9 @@ var Process = function(cmd, args, timeout) {
 };
 
 var usage = function() {
-    console.log('Usage: node agent-client-tester.js [-p port] [-v] -- client-command-line');
+    console.log('Usage: node agent-client-tester.js [-p port] [-t timeout] [-v] -- client-command-line');
     console.log('  -p port : listening port, default is 8000');
+    console.log('  -t timeout : maximum time before client process is killed');
     console.log('  -v : verbose output');
 };
 
@@ -207,6 +208,13 @@ var usage = function() {
 if (argv.p) {
     PORT = parseInt(argv.p);
     if (!(PORT > 0 && PORT < 65536)) {
+        usage();
+        process.exit(1);
+    }
+}
+if (argv.t) {
+    MAX_EXECUTION_TIME = parseInt(argv.t);
+    if (MAX_EXECUTION_TIME < 0) {
         usage();
         process.exit(1);
     }
@@ -228,6 +236,7 @@ if (!CMD) {
 // Initialize process but don't start yet 
 var client = Process(CMD, ARGS, MAX_EXECUTION_TIME);
 console.log(util.format('Client cmdline: "%s %s"', CMD, ARGS.join(" ")));
+console.log(util.format('Maximum execution time: %s ms', MAX_EXECUTION_TIME));
 
 /// HTTP interface
 var express = require('express');
