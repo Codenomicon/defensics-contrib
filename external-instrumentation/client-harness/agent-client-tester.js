@@ -158,7 +158,7 @@ var Process = function(cmd, args, timeout) {
         if (_process) {
             console.log("MAX_EXECUTION_TIME; pid: " + _process.pid);
         } else {
-            console.log("MAX_EXECUTIONTIME");
+            console.log("MAX_EXECUTION_TIME");
         }
         _signals.push('TIMEOUT');
         _process.kill('SIGKILL');
@@ -261,7 +261,7 @@ http.post('/api/:command', function(req, res){
             break;
         case 'instrumentation':
             // Return log and signals in JSON response
-            rdata['logs'] = {'SUT': client.log()};
+            rdata['logs'] = {'SUT': [client.log()]};
             rdata['signals'] = client.signals();
 
             // If we have fatal signals, mark verdict fail
@@ -275,6 +275,7 @@ http.post('/api/:command', function(req, res){
             // Clear log now that we already returned it.
             client.clearLog();
             break;
+        case 'after-case':
         case 'after-run':
             // Kill client just in case, especially if it was looping
             client.stop();
