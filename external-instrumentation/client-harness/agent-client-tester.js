@@ -123,7 +123,7 @@ var Process = function(cmd, args, timeout) {
             // Don't timeout if it already exited
             clearTimeout(_timeout_timer);
 
-            DEBUG('EXITED: ' + _process.pid + " code " + code + " signal " + signal);
+            DEBUG('EXITED: code ' + code + " signal " + signal);
 
             // If exited normally, store the exit code
             if (code) {
@@ -155,7 +155,11 @@ var Process = function(cmd, args, timeout) {
     };
 
     var _timeoutHandler = function () {
-        console.log("MAX_EXECUTION_TIME; pid: " + _process.pid);
+        if (_process) {
+            console.log("MAX_EXECUTION_TIME; pid: " + _process.pid);
+        } else {
+            console.log("MAX_EXECUTIONTIME");
+        }
         _signals.push('TIMEOUT');
         _process.kill('SIGKILL');
     }

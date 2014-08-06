@@ -77,9 +77,10 @@ client application is executed. It does not have to be on
 the same system as Defensics.
 
 Also required is the HTTP
-server module "Express". You can install that if you go
+server module "Express" and argument parsing module "minimist".
+You can install required modules if you go
 to the directory **client-harness** and run ```npm install```.
-That will install it locally under a directory ```node_modules```.
+That will install new modules locally under a directory ```node_modules```.
 
 Usage:
 
