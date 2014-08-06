@@ -161,7 +161,9 @@ var Process = function(cmd, args, timeout) {
             console.log("MAX_EXECUTION_TIME");
         }
         _signals.push('TIMEOUT');
-        _process.kill('SIGKILL');
+        if (_process) {
+            _process.kill('SIGKILL');
+        }
     }
 
     var stop = function () {
