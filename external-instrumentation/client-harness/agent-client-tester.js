@@ -275,7 +275,6 @@ http.post('/api/:command', function(req, res){
             // Clear log now that we already returned it.
             client.clearLog();
             break;
-        case 'after-case':
         case 'after-run':
             // Kill client just in case, especially if it was looping
             client.stop();
