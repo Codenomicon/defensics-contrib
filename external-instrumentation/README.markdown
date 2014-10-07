@@ -244,3 +244,17 @@ Run the agent like this, replacing echo server IP address:
 [code]: _img/defensics-extinst-sendcode.png "Example configuration for External Instrumentation"
 [nodejs]: http://nodejs.org/ "node.js runtime"
 [python]: http://www.python.org/ "Python runtime"
+
+# SMS notification #
+
+As noted under "External instrumentation scripts" you are able to hook scripts at different states of a test run. 
+Defensics can send Short Message Service (SMS) notifications when instrument fails. This means when the test target crashes and does not recover a message can be sent for notification that a failure was discovered. 
+
+What you will need to run this script:
+
+1. Create an account from Twilio.com
+ 1. Retrieve Phone number, Id , and Token generated under your dashboard from Twilio.com 
+3. Plug Phone number, Id, and Token into the supplied script
+4. Install Twilio Python helper lib
+  4. https://github.com/twilio/twilio-python
+5. Call script into Defencis External Instrumention
