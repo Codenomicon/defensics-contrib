@@ -240,8 +240,9 @@ console.log(util.format('Maximum execution time: %s ms', MAX_EXECUTION_TIME));
 
 /// HTTP interface
 var express = require('express');
+var bodyParser = require('body-parser');
 var http = express();
-http.use(express.json()); // Parse HTTP POST
+http.use(bodyParser.json()); // Parse HTTP POST
 
 // Define API
 http.post('/api/:command', function(req, res){

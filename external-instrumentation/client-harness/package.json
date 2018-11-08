@@ -8,8 +8,9 @@
   },
   "repository": "",
   "dependencies": {
-    "express": "3.x.x",
-    "minimist": "x.x.x"
+    "express": "*",
+    "body-parser": "*",
+    "minimist": "*"
   },
   "author": "Codenomicon Ltd.",
   "license": "BSD"
